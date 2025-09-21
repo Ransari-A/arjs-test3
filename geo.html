@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Location-based AR (GPS)</title>
+
+  <!-- Load A-Frame -->
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+
+  <!-- Helper so text and objects can face the camera -->
+  <script src="https://unpkg.com/aframe-look-at-component@1.0.0/dist/aframe-look-at-component.min.js"></script>
+
+  <!-- AR.js build with GPS/location support -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #tip {
+      position: fixed; left: 50%; top: 12px; transform: translateX(-50%);
+      background: rgba(0,0,0,.65); color: #fff; padding: 8px 12px; border-radius: 10px;
+      font: 600 14px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Helpful hint to the user -->
+  <div id="tip">Allow Location + Camera. Walk toward the GPS point to see the AR object.</div>
+
+  <!-- AR scene -->
+  <a-scene
+    embedded
+    vr-mode-ui="enabled: false"
+    renderer="logarithmicDepthBuffer: true; precision: medium;"
+    arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+  >
+    <!-- Preload your 3D model -->
+    <a-assets>
+      <a-asset-item id="m" src="my3d2.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- Example text at that GPS point -->
+    <a-text
+      value="You have reached the AR spot!"
+      look-at="[gps-camera]"
+      scale="60 60 60"
+      gps-entity-place="latitude: 36.00248358445331; longitude: -78.91602325642572;"
+      color="#FFD700"
+    ></a-text>
+
+    <!-- Your 3D model placed at that exact GPS coordinate -->
+    <a-entity
+      gltf-model="#m"
+      gps-entity-place="latitude: 36.00248358445331; longitude: -78.91602325642572;"
+      scale="10 10 10"
+      rotation="0 0 0"
+      animation-mixer
+    ></a-entity>
+
+    <!-- GPS-enabled camera -->
+    <a-camera gps-camera rotation-reader></a-camera>
+  </a-scene>
+
+  <script>
+    // Small helper message that updates when GPS locks
+    const tip = document.getElementById('tip');
+    window.addEventListener('gps-camera-update-position', (e) => {
+      tip.textContent = `GPS locked: ${e.detail.position.latitude.toFixed(5)}, ${e.detail.position.longitude.toFixed(5)}`;
+      setTimeout(() => tip.style.display = 'none', 5000);
+    });
+  </script>
+</body>
+</html>

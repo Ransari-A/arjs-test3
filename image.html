@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Tracking — AR.js + A-Frame</title>
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <!-- AR.js build with Image Tracking (NFT) + Location -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; }
+    .arjs-loader {
+      height: 100%; width: 100%; position: absolute; top:0; left:0;
+      background: rgba(0,0,0,.85); z-index: 9999; display:flex; align-items:center; justify-content:center;
+      color:#fff; font: 600 14px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      text-align:center; padding: 0 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Simple loading overlay while image descriptors load -->
+  <div class="arjs-loader"><div>Loading… If this takes long, check your image URL and that the files are on the same server.</div></div>
+
+  <a-scene
+    vr-mode-ui="enabled:false"
+    renderer="logarithmicDepthBuffer:true; precision: medium;"
+    embedded
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+  >
+    <!-- Preload your 3D model -->
+    <a-assets>
+      <a-asset-item id="myModel" src="my3d3.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- YOUR custom trigger image goes here.
+         IMPORTANT: url points to the *base name* of the NFT files, without extension. -->
+    <a-nft
+      type="nft"
+      url="nft/myPoster/myPoster"
+      smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5"
+    >
+      <a-entity
+        gltf-model="#myModel"
+        scale="5 5 5"
+        position="0 0 0"
+        rotation="0 0 0"
+        animation-mixer
+      ></a-entity>
+    </a-nft>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+</html>
